@@ -17,7 +17,7 @@ class Address
         $parse['name']     = '';
         $parse['mobile']   = '';
         $parse['postcode'] = '';
-        $parse['detail'] = '';
+        $parse['detail']   = '';
 
         //1. 过滤掉收货地址中的常用说明字符，排除干扰词
         $search = ['地址', '收货地址', '收货人', '收件人', '收货', '邮编', '电话', '：', ':', '；', ';', '，', ',', '。', ];
@@ -37,7 +37,7 @@ class Address
             $address = str_replace($match[0], '', $address);
         }
 
-        //5. 提取6位邮编
+        //5. 提取6位邮编 邮编也可用后面解析出的省市区地址从数据库匹配出
         preg_match('/\d{6}/', $address, $match);
         if ($match && $match[0]) {
             $parse['postcode'] = $match[0];
@@ -67,3 +67,4 @@ class Address
 }
 
 $obj = Address::smart_parse('收货人姓某某收货地址：武侯区倪家桥路11号附2号  617000  136-3333-6666 ');
+
