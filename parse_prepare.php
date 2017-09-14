@@ -68,3 +68,15 @@ class Address
 
 $obj = Address::smart_parse('收货人姓某某收货地址：武侯区倪家桥路11号附2号  617000  136-3333-6666 ');
 
+//上面例子解析结果
+array(4) {
+  ["name"]=>
+  string(9) "姓某某"
+  ["mobile"]=>
+  string(11) "13633336666"
+  ["postcode"]=>
+  string(6) "617000"
+  ["detail"]=>
+  string(33) "武侯区倪家桥路11号附2号"
+}
+
