@@ -8,6 +8,9 @@
 
 该项目采用的是，统计特征分析，然后以最大的概率来匹配，得出大概率的解。因此只能解析中文的收货信息，而且不能保证100%解析成功，但是从生产环境的使用情况来看，解析成功率保持在96%以上。
 
+<img src="img/1.png" width="300" >
+<img src="img/2.png" width="300" >
+
 如果有什么问题或建议，可以
 提交[Github Issue](https://github.com/pupuk/address-smart-parse/issues)
 
@@ -21,7 +24,9 @@
 ## 1. 把字符串解析成姓名、收货电话、邮编、收货地址
 使用parse_prepare.php文件中的Address::smart_parse方法，该静态方法接受字符串，返回数组。如：
 
+```php
 Address::smart_parse('收货人姓某某收货地址：武侯区倪家桥路11号附2号  617000  136-3333-6666 ');
+```
 
 返回：
 ```php
@@ -36,7 +41,9 @@ array(4) {
 
 ## 2. 把收货地址解析成省、市、区县、街道小区地址
 使用parse_detail.php文件中的$obj = AddressDetail::detail_parse($str)方法，该静态方法接受字符串，同样返回数组。但该文件要配合项目的的地址库 area.sql 才能使用，如：
+```php
 AddressDetail::detail_parse('成都市高新区天府软件园B区科技大楼');
+```
 
 返回数组
 ```php
