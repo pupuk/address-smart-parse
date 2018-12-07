@@ -158,3 +158,4 @@ class AddressDetail
 }
 
 $obj = AddressDetail::detail_parse('成都市高新区天府软件园B区科技大楼');
+$obj2 = AddressDetail::detail_parse('朝阳区宵云路36号国航大厦一层');
