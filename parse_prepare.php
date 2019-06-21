@@ -30,8 +30,8 @@ class Address
         //3. 去除手机号码中的短横线 如136-3333-6666 主要针对苹果手机
         $address = preg_replace('/(\d{3})-(\d{4})-(\d{4})/', '$1$2$3', $address);
 
-        //4. 提取11位手机号码
-        preg_match('/\d{11}/', $address, $match);
+        //4. 提取11位手机号码或者7位以上座机号
+        preg_match('/\d{7,11}/', $address, $match);
         if ($match && $match[0]) {
             $parse['mobile'] = $match[0];
             $address = str_replace($match[0], '', $address);
