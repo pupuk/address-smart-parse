@@ -31,7 +31,7 @@ class Address
         $address = preg_replace('/(\d{3})-(\d{4})-(\d{4})/', '$1$2$3', $address);
 
         //4. 提取11位手机号码或者7位以上座机号
-        preg_match('/\d{7,11}/', $address, $match);
+        preg_match('/\d{7,11}|\d{3,4}-\d{6,8}/', $address, $match);
         if ($match && $match[0]) {
             $parse['mobile'] = $match[0];
             $address = str_replace($match[0], '', $address);
