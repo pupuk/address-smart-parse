@@ -17,11 +17,12 @@ class Address
         $parse['name']     = '';
         $parse['mobile']   = '';
         $parse['postcode'] = '';
+        $parse['idno']     = '';
         $parse['detail']   = '';
 
         //1. 过滤掉收货地址中的常用说明字符，排除干扰词
-        $search = ['地址', '收货地址', '收货人', '收件人', '收货', '邮编', '电话', '：', ':', '；', ';', '，', ',', '。', ];
-        $replace = [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '];
+        $search = ['收货地址', '地址', '收货人', '收件人', '收货', '邮编', '电话', '身份证号码', '身份证号', '身份证', '：', ':', '；', ';', '，', ',', '。', ];
+        $replace = [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '];
         $address = str_replace($search, $replace, $address);
 
         //2. 连续2个或多个空格替换成一个空格
@@ -30,14 +31,21 @@ class Address
         //3. 去除手机号码中的短横线 如136-3333-6666 主要针对苹果手机
         $address = preg_replace('/(\d{3})-(\d{4})-(\d{4})/', '$1$2$3', $address);
 
-        //4. 提取11位手机号码或者7位以上座机号
+        //4. 提取中国境内身份证号码
+        preg_match('/\d{18}|\d{17}X/i', $address, $match);
+        if ($match && $match[0]) {
+            $parse['idno'] = strtoupper($match[0]);
+            $address = str_replace($match[0], '', $address);
+        }
+
+        //5. 提取11位手机号码或者7位以上座机号
         preg_match('/\d{7,11}|\d{3,4}-\d{6,8}/', $address, $match);
         if ($match && $match[0]) {
             $parse['mobile'] = $match[0];
             $address = str_replace($match[0], '', $address);
         }
 
-        //5. 提取6位邮编 邮编也可用后面解析出的省市区地址从数据库匹配出
+        //6. 提取6位邮编 邮编也可用后面解析出的省市区地址从数据库匹配出
         preg_match('/\d{6}/', $address, $match);
         if ($match && $match[0]) {
             $parse['postcode'] = $match[0];
@@ -60,23 +68,24 @@ class Address
         }
         $parse['detail'] = $address;
 
-
-        //parse['detail']详细地址可以传入另一个文件的函数，解析出：省，市，区，街道地址
+        //parse['detail']详细地址可以传入另一个文件的函数，用来解析出：省，市，区，街道地址
         var_dump($parse);
     }
 }
 
-$obj = Address::smart_parse('收货人姓某某收货地址：武侯区倪家桥路11号附2号  617000  136-3333-6666 ');
+$obj = Address::smart_parse('身份证号：51250119910927226x 收货地址张三收货地址：武侯区美领馆路11号附2号 617000  136-3333-6666 ');
 
-//上面例子解析结果
-array(4) {
+//上面例子会解析出结果：
+array(5) {
   ["name"]=>
-  string(9) "姓某某"
+  string(6) "张三"
   ["mobile"]=>
   string(11) "13633336666"
   ["postcode"]=>
   string(6) "617000"
+  ["idno"]=>
+  string(18) "51250119910927226X"
   ["detail"]=>
-  string(33) "武侯区倪家桥路11号附2号"
+  string(33) "武侯区美领馆路11号附2号"
 }
 
