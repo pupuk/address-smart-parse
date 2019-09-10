@@ -20,6 +20,10 @@
 1. fork该项目
 1. 提交Pull Requests
 1. 如果积极贡献，可以放开权限
+1. 欢迎改写成其它语言版本，只需注明参考链接即可。
+
+### 目前发现的优秀项目
+- js版本 [https://github.com/wzc570738205/smart_parse](https://github.com/wzc570738205/smart_parse)
 
 ## 1. 把字符串解析成姓名、收货电话、邮编、收货地址
 使用parse_prepare.php文件中的Address::smart_parse方法，该静态方法接受字符串，返回数组。如：
@@ -75,3 +79,4 @@ array(3) {
 
 ## 3. 联系作者
 * Email：pujiexuan@gmail.com
+* QQ: 632085136
