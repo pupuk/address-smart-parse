@@ -25,8 +25,8 @@ class Address
         $replace = [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '];
         $address = str_replace($search, $replace, $address);
 
-        //2. 连续2个或多个空格替换成一个空格
-        $address = preg_replace('/ {2,}/', ' ', $address);
+        //2. 连续2个或多个空白字符(包括空格\r\n\t)换成一个空格
+        $address = preg_replace('/\s{2,}/', ' ', $address);
 
         //3. 去除手机号码中的短横线 如136-3333-6666 主要针对苹果手机
         $address = preg_replace('/(\d{3})-(\d{4})-(\d{4})/', '$1$2$3', $address);
@@ -73,7 +73,11 @@ class Address
     }
 }
 
-$obj = Address::smart_parse('身份证号：51250119910927226x 收货地址张三收货地址：成都市武侯区美领馆路11号附2号 617000  136-3333-6666 ');
+$str = `  身份证号：51250119910927226x 收货地址张三
+    收货地址：成都市武侯区美领馆路11号附2号
+    617000  136-3333-6666 `;
+
+$obj = Address::smart_parse($str);
 
 //上面例子会解析出结果：
 array(5) {
