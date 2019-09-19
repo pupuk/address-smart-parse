@@ -14,19 +14,14 @@ class Address
     {   
         //解析结果
         $parse = [];
-        $parse['name']     = '';
-        $parse['mobile']   = '';
-        $parse['postcode'] = '';
-        $parse['idno']     = '';
-        $parse['detail']   = '';
-
+        
         //1. 过滤掉收货地址中的常用说明字符，排除干扰词
         $search = ['收货地址', '地址', '收货人', '收件人', '收货', '邮编', '电话', '身份证号码', '身份证号', '身份证', '：', ':', '；', ';', '，', ',', '。', ];
         $replace = [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '];
         $address = str_replace($search, $replace, $address);
 
-        //2. 连续2个或多个空白字符(包括空格\r\n\t)换成一个空格
-        $address = preg_replace('/\s{2,}/', ' ', $address);
+        //2. 把空白字符(包括空格\r\n\t)都换成一个空格
+        $address = preg_replace('/\s{1,}/', ' ', $address);
 
         //3. 去除手机号码中的短横线 如136-3333-6666 主要针对苹果手机
         $address = preg_replace('/(\d{3})-(\d{4})-(\d{4})/', '$1$2$3', $address);
