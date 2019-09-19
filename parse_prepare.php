@@ -24,7 +24,7 @@ class Address
         $address = preg_replace('/\s{1,}/', ' ', $address);
 
         //3. 去除手机号码中的短横线 如136-3333-6666 主要针对苹果手机
-        $address = preg_replace('/(\d{3})-(\d{4})-(\d{4})/', '$1$2$3', $address);
+        $address = preg_replace('/0-|0?(\d{3})-(\d{4})-(\d{4})/', '$1$2$3', $address);
 
         //4. 提取中国境内身份证号码
         preg_match('/\d{18}|\d{17}X/i', $address, $match);
