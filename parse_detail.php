@@ -24,9 +24,10 @@ class AddressDetail
         // $detail = '重庆攀枝花市东区机场路3中学校';
         // $detail = '渝北区渝北中学51200街道地址';
         // $detail = '天津天津市红桥区水木天成1区临湾路9-3-1101';
-        
+        $detail_origin = $detail; //保存原始参数
         $detail = str_replace(' ', '', $detail);
-
+        $detail = str_replace("自治区", "省", $detail);  //避免自治区被错误识别
+        $detail = str_replace("自治州", "州", $detail);  //避免自治区被错误识别
         //返回结果
         $result = [];
 
@@ -65,7 +66,15 @@ class AddressDetail
                     $zone_pos = mb_strpos($detail, '县');
                     $deep3_area_name = mb_substr($detail, $city_pos + 1, $zone_pos - $city_pos);
                 } else {
-                    $deep3_area_name = mb_substr($detail, $deep3_keyword_pos - 2, 3);
+                    //考虑形如【甘肃省东乡族自治县布楞沟村1号】的情况
+                    if (mb_strstr($detail, '自治县')){
+                        $deep3_area_name = mb_substr($detail, $deep3_keyword_pos - 6, 7);
+                        if(in_array(mb_substr($deep3_area_name, 0, 1) , ['省', '市', '州'] )){
+                            $deep3_area_name = mb_substr($deep3_area_name, 1);
+                        }
+                    }else{
+                        $deep3_area_name = mb_substr($detail, $deep3_keyword_pos - 2, 3);
+                    }
                     //县名称最大的概率为3个字符 美姑县 阆中市 高新区
                 }
             }
@@ -98,7 +107,12 @@ class AddressDetail
             }
 
             if ($tmp_pos = mb_strrpos($detail, '州')) {
-                $deep2_area_name = mb_substr($detail, $tmp_pos - 2, 3);
+                //考虑自治州的情况
+                if($tmp_pos = mb_strrpos($detail, '自治州')) {
+                    $deep2_area_name = mb_substr($detail, $tmp_pos-4, 5);
+                }else{
+                    $deep2_area_name = mb_substr($detail, $tmp_pos-2, 3);
+                }
             }
         } else {
             $deep2_area_name = '';
@@ -146,6 +160,21 @@ class AddressDetail
                         $result[2]['area_name'] = $area_info_2['area_name'];
                         $result[3]['area_id'] = $deep3_area_list[0]['area_id'];
                         $result[3]['area_name'] = $deep3_area_list[0]['area_name'];
+                    }
+
+                }elseif($deep2_area_name == $deep3_area_name){   //如出现内蒙古自治区乌兰察布市公安局交警支队车管所这种只有省市，没有区的情况
+                    $area_info_2 = $model_area->getAreaInfo(['area_deep'=>2, 'name'=>['like', '%' . $deep2_area_name . '%']]);
+                    if ($area_info_2) {
+                        $area_info_1 = $model_area->getAreaInfo(['area_id' => $area_info_2['area_parent_id'], 'area_deep' => 1]);
+                        //获得结果
+                        if($area_info_1){
+                            $result[1]['area_id'] = $area_info_2['area_parent_id'];
+                            $result[1]['area_name'] = $area_info_1['area_name'];
+                            $result[2]['area_id'] = $area_info_2['area_id'];
+                            $result[2]['area_name'] = $area_info_2['area_name'];
+                            $result[3]['area_id'] = '';
+                            $result[3]['area_name'] = '';
+                        }
                     }
 
                 }
