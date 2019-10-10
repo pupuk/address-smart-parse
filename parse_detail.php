@@ -65,7 +65,15 @@ class AddressDetail
                     $zone_pos = mb_strpos($detail, '县');
                     $deep3_area_name = mb_substr($detail, $city_pos + 1, $zone_pos - $city_pos);
                 } else {
-                    $deep3_area_name = mb_substr($detail, $deep3_keyword_pos - 2, 3);
+                    //考虑形如【甘肃省东乡族自治县布楞沟村1号】的情况
+                    if (mb_strstr($detail, '自治县')){
+                        $deep3_area_name = mb_substr($detail, $deep3_keyword_pos - 6, 7);
+                        if(in_array(mb_substr($deep3_area_name, 0, 1) , ['省', '市', '州'] )){
+                            $deep3_area_name = mb_substr($deep3_area_name, 1);
+                        }
+                    }else{
+                        $deep3_area_name = mb_substr($detail, $deep3_keyword_pos - 2, 3);
+                    }
                     //县名称最大的概率为3个字符 美姑县 阆中市 高新区
                 }
             }
@@ -98,7 +106,12 @@ class AddressDetail
             }
 
             if ($tmp_pos = mb_strrpos($detail, '州')) {
-                $deep2_area_name = mb_substr($detail, $tmp_pos - 2, 3);
+                //考虑自治州的情况
+                if($tmp_pos = mb_strrpos($detail, '自治州')) {
+                    $deep2_area_name = mb_substr($detail, $tmp_pos-4, 5);
+                }else{
+                    $deep2_area_name = mb_substr($detail, $tmp_pos-2, 3);
+                }
             }
         } else {
             $deep2_area_name = '';
