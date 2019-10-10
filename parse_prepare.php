@@ -1,6 +1,6 @@
 <?php
 /**
-* 此过程不需要查询数据库，是纯PHP
+* 此过程不需要查询数据库，是纯PHP，可单独运行
 */
 class Address
 {
@@ -64,26 +64,28 @@ class Address
         $parse['detail'] = $address;
 
         //parse['detail']详细地址可以传入另一个文件的函数，用来解析出：省，市，区，街道地址
-        var_dump($parse);
+        return $parse;
     }
 }
 
-$str = `  身份证号：51250119910927226x 收货地址张三
+//模拟一个多行的复杂地址
+$str = <<<'EOD'
+  身份证号：51250119910927226x 收货地址张三
     收货地址：成都市武侯区美领馆路11号附2号
-    617000  136-3333-6666 `;
+    617000  0136-3333-6688 
+EOD;
 
-$obj = Address::smart_parse($str);
+$result = Address::smart_parse($str);
+print_r($result);
 
 //上面例子会解析出结果：
-array(5) {
-  ["name"]=>
-  string(6) "张三"
-  ["mobile"]=>
-  string(11) "13633336666"
-  ["postcode"]=>
-  string(6) "617000"
-  ["idno"]=>
-  string(18) "51250119910927226X"
-  ["detail"]=>
-  string(33) "成都市武侯区美领馆路11号附2号"
-}
+/*
+Array
+(
+    [idno] => 51250119910927226X
+    [mobile] => 13633336688
+    [postcode] => 617000
+    [name] => 张三
+    [detail] => 成都市武侯区美领馆路11号附2号
+)
+*/
