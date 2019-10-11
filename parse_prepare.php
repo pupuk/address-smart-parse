@@ -47,7 +47,7 @@ class Address
             $address = str_replace($match[0], '', $address);
         }
 
-        //再次把2个及其以上的空格合并成一个，并首位TRIM
+        //再次把2个及其以上的空格合并成一个，并TRIM
         $address = trim(preg_replace('/ {2,}/', ' ', $address));
 
         //按照空格切分 长度长的为地址 短的为姓名 因为不是基于自然语言分析，所以采取统计学上高概率的方案
